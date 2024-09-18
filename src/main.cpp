@@ -35,10 +35,11 @@ Returned:     Exit Status
 
 int main () {
   char hexChar = '1';
-  string inputString = "0b01010";
+  string inputString = "4";
 
   cout << hexCharToInt(hexChar) << endl;
   cout << getBase(inputString) << endl;
+  cout << decimalToBinary(inputString) << endl;
   
   return EXIT_SUCCESS;
 }
@@ -140,7 +141,9 @@ Returned:			string representing the decimal equivalent
 ***********************************************************************/
 
 string binaryToDecimal (const string& strNumber) {
-  return NULL;
+  int decimalValue = stoi(strNumber, nullptr, 2); // second parameter is not 
+                                                  // used, therefore nullptr
+  return to_string(decimalValue);
 }
 
 /***********************************************************************
@@ -154,7 +157,20 @@ Returned:			string representing the binary equivalent
 ***********************************************************************/
 
 string decimalToBinary (const string& strNumber) {
-  return NULL;
+  int decimalValue = stoi(strNumber);
+  string binaryValue;
+
+  while (decimalValue > 0) {
+    if (decimalValue % 2 == 0) {
+      binaryValue = "0" + binaryValue;
+    }
+    else {
+      binaryValue = "1" + binaryValue;
+    }
+    decimalValue = decimalValue / 2;
+  }
+
+  return "0b" + binaryValue;
 }
 
 /***********************************************************************
@@ -168,6 +184,8 @@ Returned:			string representing the hexadecimal equivalent
 ***********************************************************************/
 
 string decimalToHex (const string& strNumber) {
+  int decimalValue = stoi(strNumber);
+  string hexValue;
   return NULL;
 }
 
