@@ -34,12 +34,38 @@ Returned:     Exit Status
 ***********************************************************************/
 
 int main () {
-  char hexChar = '1';
-  string inputString = "4";
+  const string TITLE = "HEX-DECIMAL-BINARY CONVERTER";
+  string userInput;
 
-  cout << hexCharToInt(hexChar) << endl;
-  cout << getBase(inputString) << endl;
-  cout << decimalToBinary(inputString) << endl;
+  printTitle(TITLE);
+
+  while (true) {
+
+    cout << "\nEnter your string to convert (q to quit): ";
+    cin >> userInput;
+
+    if (userInput == "q") {
+      break;
+    }
+    else if (getBase(userInput) == 'B') {
+      cout << "The decimal conversion is: " << binaryToDecimal(userInput)
+           << endl;
+      cout << "The hexadecimal conversion is: " << binaryToHex(userInput)
+           << endl;
+    }
+    else if (getBase(userInput) == 'H') {
+      cout << "The decimal conversion is: " << hexToDecimal(userInput)
+           << endl;
+      cout << "The binary conversion is: " << hexToBinary(userInput)
+           << endl;
+    }
+    else {
+      cout << "The binary conversion is: " << decimalToBinary(userInput)
+           << endl;
+      cout << "The hexadecimal conversion is: " << decimalToHex(userInput)
+           << endl;
+    }
+  }
   
   return EXIT_SUCCESS;
 }
@@ -184,9 +210,26 @@ Returned:			string representing the hexadecimal equivalent
 ***********************************************************************/
 
 string decimalToHex (const string& strNumber) {
-  int decimalValue = stoi(strNumber);
   string hexValue;
-  return NULL;
+  int remainder = 0;
+
+  int decimalValue = stoi(strNumber);
+
+  while (decimalValue > 0) {
+
+    remainder = decimalValue % 16;
+
+    if (remainder < 10) {
+      hexValue = to_string(remainder) + hexValue;  // Convert 0-9
+    }
+    else {
+      hexValue = char(remainder - 10 + 'A') + hexValue; // 10-16
+    }
+
+    decimalValue = decimalValue / 16;
+  }
+
+  return "0x" + hexValue;
 }
 
 /***********************************************************************
@@ -200,7 +243,10 @@ Returned:			string representing the decimal equivalent
 ***********************************************************************/
 
 string hexToDecimal (const string& strNumber) {
-  return NULL;
+  string hexPart = strNumber.substr(2);  // Remove the "0x" prefix
+
+  int decimalValue = stoi(hexPart, nullptr, 16);  // Convert hex to decimal
+  return to_string(decimalValue);
 }
 
 /***********************************************************************
