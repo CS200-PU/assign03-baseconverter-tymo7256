@@ -212,20 +212,16 @@ Returned:			string representing the hexadecimal equivalent
 string decimalToHex (const string& strNumber) {
   string hexValue;
   int remainder = 0;
-
   int decimalValue = stoi(strNumber);
 
   while (decimalValue > 0) {
-
     remainder = decimalValue % 16;
-
     if (remainder < 10) {
       hexValue = to_string(remainder) + hexValue;  // Convert 0-9
     }
     else {
       hexValue = char(remainder - 10 + 'A') + hexValue; // 10-16
     }
-
     decimalValue = decimalValue / 16;
   }
 
@@ -243,9 +239,20 @@ Returned:			string representing the decimal equivalent
 ***********************************************************************/
 
 string hexToDecimal (const string& strNumber) {
-  string hexPart = strNumber.substr(2);  // Remove the "0x" prefix
-
-  int decimalValue = stoi(hexPart, nullptr, 16);  // Convert hex to decimal
+  int decimalValue = 0;
+  char hexDigit;
+  
+  for (int i = 2; i < strNumber.length(); i++) { // skipping first two chars
+    hexDigit = strNumber[i];
+    decimalValue *= 16;  // shift the value left by one hexadecimal place
+    
+    if (hexDigit >= '0' && hexDigit <= '9') {
+      decimalValue += hexDigit - '0';
+    } else if (hexDigit >= 'A' && hexDigit <= 'F') {
+      decimalValue += hexDigit - 'A' + 10;
+    }
+  }
+  
   return to_string(decimalValue);
 }
 
@@ -260,7 +267,8 @@ Returned:			string representing the binary equivalent
 ***********************************************************************/
 
 string hexToBinary (const string& strNumber) {
-  return NULL;
+  string decimalValue = hexToDecimal(strNumber);
+  return decimalToBinary(decimalValue);
 }
 
 /***********************************************************************
@@ -274,5 +282,6 @@ Returned:			string representing the hexadecimal equivalent
 ***********************************************************************/
 
 string binaryToHex (const string& strNumber) {
-  return NULL;
+  string decimalValue = binaryToDecimal(strNumber);
+  return decimalToHex(decimalValue);
 }
