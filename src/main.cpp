@@ -12,6 +12,12 @@
 
 using namespace std;
 
+const string BINARY_PREFIX = "0b",
+             HEX_PREFIX = "Ox";
+const char DECIMAL_CH = 'D',
+           BINARY_CH = 'B',
+           HEX_CH = 'H';
+
 int hexCharToInt (char hexDigit);
 char getBase (const string& strNumber);
 string getNumber (const string& prompt);
@@ -34,26 +40,26 @@ Returned:     Exit Status
 ***********************************************************************/
 
 int main () {
-  const string TITLE = "HEX-DECIMAL-BINARY CONVERTER";
+  const string TITLE = "HEX-DECIMAL-BINARY CONVERTER",
+               EXIT = "q";
+
   string userInput;
 
-  printTitle(TITLE);
+  printTitle (TITLE);
 
   while (true) {
+    userInput = getNumber("\nEnter your string to convert (q to quit): ");
 
-    cout << "\nEnter your string to convert (q to quit): ";
-    cin >> userInput;
-
-    if (userInput == "q") {
+    if (userInput == EXIT) {
       break;
     }
-    else if (getBase(userInput) == 'B') {
+    else if (getBase(userInput) == BINARY_CH) {
       cout << "The decimal conversion is: " << binaryToDecimal(userInput)
            << endl;
       cout << "The hexadecimal conversion is: " << binaryToHex(userInput)
            << endl;
     }
-    else if (getBase(userInput) == 'H') {
+    else if (getBase(userInput) == HEX_CH) {
       cout << "The decimal conversion is: " << hexToDecimal(userInput)
            << endl;
       cout << "The binary conversion is: " << hexToBinary(userInput)
@@ -111,13 +117,13 @@ Returned:			one of three characters:
 
 char getBase (const string& strNumber) {
   if (strNumber[1] == 'x') {
-    return 'H';
+    return HEX_CH;
   }
   else if (strNumber[1] == 'b') {
-    return 'B';
+    return BINARY_CH;
   }
   else {
-    return 'D';
+    return DECIMAL_CH;
   }
 }
 
@@ -167,8 +173,17 @@ Returned:			string representing the decimal equivalent
 ***********************************************************************/
 
 string binaryToDecimal (const string& strNumber) {
-  int decimalValue = stoi(strNumber, nullptr, 2); // second parameter is not 
-                                                  // used, therefore nullptr
+  int decimalValue = 0;
+  char binaryDigit;
+
+  for (int i = 2; i < strNumber.length(); i++) { // skipping first two chars
+    binaryDigit = strNumber[i];
+    decimalValue *= 2;
+    if (binaryDigit == '1') {
+      decimalValue += 1;
+    }
+  }
+
   return to_string(decimalValue);
 }
 
@@ -186,6 +201,10 @@ string decimalToBinary (const string& strNumber) {
   int decimalValue = stoi(strNumber);
   string binaryValue;
 
+  if (strNumber == "0") {
+    return BINARY_PREFIX + strNumber;
+  }
+
   while (decimalValue > 0) {
     if (decimalValue % 2 == 0) {
       binaryValue = "0" + binaryValue;
@@ -196,7 +215,7 @@ string decimalToBinary (const string& strNumber) {
     decimalValue = decimalValue / 2;
   }
 
-  return "0b" + binaryValue;
+  return BINARY_PREFIX + binaryValue;
 }
 
 /***********************************************************************
@@ -214,18 +233,22 @@ string decimalToHex (const string& strNumber) {
   int remainder = 0;
   int decimalValue = stoi(strNumber);
 
+  if (strNumber == "0") {
+    return HEX_PREFIX + strNumber;
+  }
+
   while (decimalValue > 0) {
     remainder = decimalValue % 16;
     if (remainder < 10) {
-      hexValue = to_string(remainder) + hexValue;  // Convert 0-9
+      hexValue = to_string(remainder) + hexValue;  // 0-9
     }
     else {
       hexValue = char(remainder - 10 + 'A') + hexValue; // 10-16
     }
-    decimalValue = decimalValue / 16;
+    decimalValue /= 16;
   }
 
-  return "0x" + hexValue;
+  return HEX_PREFIX + hexValue;
 }
 
 /***********************************************************************
@@ -242,15 +265,11 @@ string hexToDecimal (const string& strNumber) {
   int decimalValue = 0;
   char hexDigit;
   
-  for (int i = 2; i < strNumber.length(); i++) { // skipping first two chars
+  for (int i = 2; i < strNumber.length(); i++) { 
     hexDigit = strNumber[i];
-    decimalValue *= 16;  // shift the value left by one hexadecimal place
-    
-    if (hexDigit >= '0' && hexDigit <= '9') {
-      decimalValue += hexDigit - '0';
-    } else if (hexDigit >= 'A' && hexDigit <= 'F') {
-      decimalValue += hexDigit - 'A' + 10;
-    }
+    decimalValue *= 16;
+
+    decimalValue += hexCharToInt(hexDigit);
   }
   
   return to_string(decimalValue);
